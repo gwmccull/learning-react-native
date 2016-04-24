@@ -1,75 +1,104 @@
 'use strict';
 import React, {
-    StatusBar,
     AppRegistry,
     Component,
     Image,
     StyleSheet,
+    Switch,
     Text,
+    TouchableOpacity,
     View
 } from 'react-native';
 
-class FirstApp extends Component {
-    render() {
-        return (
-            <View style={styles.container}>
-                <StatusBar barStyle="light-content" />
-                <Text style={styles.title}>
-                    Try this:
-                </Text>
-                <Image
-                    style={styles.targetImage}
-                    source={require('./resources/images/mind-blown.gif') }
-                />
-                <View style={styles.row}>
-                    <Text style={styles.item}>
-                        I'm on the <Text style={styles.blue}>left</Text>.
-                    </Text>
-                    <Text style={styles.item}>
-                        I'm on the <Text style={styles.orange}>right</Text>.
-                    </Text>
-                </View>
+const FirstApp = React.createClass({
+    getInitialState() {
+        return {
+            // You may want to put stuff here.
+            launchLock: false,
+            launchButton: false
+        }
+    },
 
-            </View>
-        );
+    onButtonPress() {
+        if (this.state.launchLock) {
+            this.setState({launchButton: !this.state.launchButton});
+        } else {
+            return false;
+        }
+    },
+
+    onImagePress() {
+        this.onButtonPress();
+        this.setState({launchLock: false});
+    },
+
+    render() {
+        if (!this.state.launchButton) {
+            return (
+                <View style={styles.container}>
+                    <Text style={styles.h1}>
+                        Launch Control
+                    </Text>
+                    <Switch onValueChange={(value) => this.setState({launchLock: value})}
+                            value={this.state.launchLock} />
+                    <TouchableOpacity onPress={this.onButtonPress}>
+                        <Text style={this.state.launchLock ? styles.button : styles.disabledButton}>
+                            Launch
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            );
+        } else {
+            return (
+                <View style={styles.imageContainer}>
+                    <TouchableOpacity style={styles.image} onPress={this.onImagePress}>
+                        <Image
+                            style={styles.image}
+                            source={{uri: 'https://s3.amazonaws.com/vigesharing-is-vigecaring/lkurtz/rnwksp-c4-launch.jpg'}}
+                        />
+                    </TouchableOpacity>
+                </View>
+            )
+        }
     }
-}
+})
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#252525',
+        backgroundColor: '#eee',
     },
-    title: {
+    h1: {
         fontSize: 20,
         textAlign: 'center',
-        margin: 10,
-        color: 'white'
+        margin: 20,
     },
-    row: {
-        flexDirection: 'row'
+    imageContainer: {
+        flex: 1,
+        alignItems: 'stretch'
     },
-    item: {
+    image: {
+        flex: 1
+    },
+    instructions: {
         marginTop: 10,
-        marginHorizontal: 30,
         textAlign: 'center',
-        color: 'white'
     },
-    blue: {
-        color: '#06F'
+    button: {
+        color: 'white',
+        backgroundColor: 'red',
+        padding: 15,
+        borderRadius: 7,
+        marginTop: 20
     },
-    orange: {
-        color: 'orange'
-    },
-    targetImage: {
-        width: 200,
-        height: 200,
-        marginTop: 25,
-        borderRadius: 100,
-        borderWidth: 5,
-        borderColor: 'black'
+    disabledButton: {
+        color: '#333',
+        backgroundColor: 'gray',
+        padding: 15,
+        borderRadius: 7,
+        marginTop: 20
     }
 });
 
